@@ -2,6 +2,7 @@ var self = window.self;
 
 (function(self) {
 
+
 	var points = [], numPoints = 20, i, canvas, context, width, height, bounce = -1, radius = [];
     
     canvas = document.getElementById("canvas");
@@ -62,23 +63,25 @@ var self = window.self;
         var i, point;
         for(i = 0; i < numPoints; i += 1) {
             point = points[i];
+
             context.beginPath();
             context.arc(point.x, point.y, radius[i], 0, Math.PI * 2, false);
             context.fillStyle="#FFFFFF";
             context.fill();
-            context.closePath();
 
             context.beginPath();
             context.rect(point.y, point.x, radius[i], radius[i]);
             context.fillStyle="#FFFFFF";
             context.fill();
-            context.closePath();
         }
     }
     
-    setInterval(function() {
-        update();
-        draw();
-    }, 13);
+    function render () {
+    	update();
+    	draw();
+    	requestAnimationFrame(render);
+    }
+
+    requestAnimationFrame(render);
 
 })(self);
