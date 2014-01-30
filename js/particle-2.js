@@ -1,58 +1,108 @@
 (function() {
 
+  // Grab the canvas and context before we can draw anything.
   var canvas = document.getElementById('canvas');
   var ctx = canvas.getContext('2d');
 
   if (!ctx) {
+    // No context for drawing, sorry.
     return;
   }
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+  canvas.width = width;
+  canvas.height = height;
+  ctx.fillStyle = '#FFF';
 
-  ctx.fillStyle = '#333';
+  // Physics particles
+  var gravity = 0.5; // Occurs in the y-direction, negative y goes up.
+  var physics = new Physics(gravity);
+  var system = new ParticleSystem();
+  var particles = system.particles;
+  // var mouse = system.makeParticle();
 
-  var physics = new Physics();
+  // canvas.onclick = function(e) {
+  //   mouse.makeFixed();  
+  // };
+  
 
-  var radius = 50;
-  var mass = 25;
+  var b = physics.makeParticle( 1.0, Math.random() * canvas.width , Math.random() * canvas.height , 0 );
+  var c = physics.makeParticle( 1.0, Math.random() * canvas.width , Math.random() * canvas.height , 0 );
 
-  // var x1 = canvas.width * 0.25;
-  // var x2 = canvas.width * 0.75;
-  // var y = canvas.height / 2;
+  // Particle variables
+  var mass = 0.5;
+  var x = canvas.width / 2;
+  var y = canvas.height / 2;
+  var particle;
+  var radius =  [];
+  var px = [];
+  var py = [];
+  var prtcl = [];
+  var bounce = -0.981;
+  var count = 15;
 
-  // var a = physics.makeParticle(mass, x1, y);
-  // var b = physics.makeParticle(mass, x2, y);
+  //physics.makeAttraction( mouse, b, 10000, 10 );
+  //physics.makeAttraction( mouse, c, 10000, 10 );
+  
+  for(i = 0; i < count; i += 1) {
 
-  // Create an attraction between the particles.
+    px.push( Math.random() * width );
+    py.push( Math.random() * height );
+    radius.push( Math.random() * 10 + 5 );
 
-  // The strength of the bond between two particles.
-  var strength = 5000;
-
-  // The proximity at which the attraction will be enabled.
-  var minDistance = canvas.width;
-
-  // Make the attraction and add it to physics
-  var attraction = physics.makeAttraction(a, b, strength, minDistance);
-
+  }
   var render = function() {
 
+    // Clear the previous contents of the context.
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    var x1 = a.position.x;
-    var y1 = a.position.y;
+    for(var i = 0; i < count; ++i) {
+      particle = physics.makeParticle(mass, 1, 1, 0 );
+      handleBoundaryCollisions( particle );
 
-    var x2 = b.position.x;
-    var y2 = b.position.y;
+      ctx.beginPath();
+      ctx.arc( px[i], py[i] , radius[i], 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // handleBoundaryCollisions(b);
+    // handleBoundaryCollisions(c);
 
-    // Draw a
-    ctx.beginPath();
-    ctx.arc(x1, y1, radius, 0, Math.PI * 2, false);
-    ctx.fill();
+    // ctx.beginPath();
+    // ctx.arc( b.position.x, b.position.y, radius, 0, Math.PI * 2);
+    // ctx.fill();
+    // ctx.closePath();
 
-    // Draw b
-    ctx.beginPath();
-    ctx.arc(x2, y2, radius, 0, Math.PI * 2, false);
-    ctx.fill();
-
+    // ctx.beginPath();
+    // ctx.arc( c.position.x, c.position.y, radius, 0, Math.PI * 2);
+    // ctx.fill();
+    // ctx.closePath();
   };
+
+  function handleBoundaryCollisions ( p ) {
+    // if ( p.position.x < 0 || p.position.x > canvas.width ) {
+    //   p.position.set( p.velocity.y *= -1, p.velocity.x );
+    // } 
+    // if ( p.position.y < 0 || p.position.y > canvas.height ) {
+    //   p.position.set( p.velocity.y , 0.9*p.velocity.x, 0 ); 
+    // }
+
+    if(p.position.x > width - radius) {
+        p.position.x = width - radius;
+        p.velocity.x *= bounce;
+    }
+    else if(p.position.x < 0 + radius) {
+        p.position.x = 0 + radius;
+        p.velocity.x *= bounce;
+    }
+    if(p.position.y > height - radius) {
+        p.position.y = height - radius;
+        p.velocity.y *= bounce;
+    }
+    else if(p.position.y < 0 - radius ) {
+        p.position.y = 0 + radius ;
+        p.velocity.y *= bounce;
+    }
+  }
 
   // Bind the render function to when physics updates.
   physics.onUpdate(render);
@@ -60,9 +110,10 @@
   // Render a posterframe.
   render();
 
+  // Bind canvas click to toggle.
   physics.play();
   
   // store our physics object on the canvas so we can access it later
-  canvas.physics = physics;
+  //canvas.physics = physics;
 
 })();
