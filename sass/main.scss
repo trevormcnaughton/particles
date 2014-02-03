@@ -8,25 +8,26 @@
 
 body,
 html {
-	font: 16px/1.5 'Avenir Next', Helvetica Neue, sans-serif;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
+  font: 16px/1.5 'Avenir Next', Helvetica Neue, sans-serif;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 body {
-	@include background-image(linear-gradient(top left,  #FFB158 50%, #FC5A23 120% ));
+  background: #64BBD9;
 }
 h1 {
-	font-size: 10rem;
-	width: 100%;
-	text-align:center;
-	color: #FFF;
-	font-weight: 100;
-	position: absolute;
-	top: 50%;
-	@include transform(translateY(-50%));
+  font-size: 10rem;
+  width: 100%;
+  text-align:center;
+  color: #FFF;
+  font-weight: 100;
+  position: absolute;
+  top: 50%;
+  @include transform(translateY(-50%));
 }
 
 canvas {
-	overflow: hidden;
+  overflow: hidden;
+  cursor: crosshair;
 }
